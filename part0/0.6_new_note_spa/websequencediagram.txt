@@ -1,0 +1,24 @@
+note over browser
+user adds note 'This is SPArta'
+and clicks on Save button
+end note
+
+note over browser
+The note along with the date
+is pushed into notes array which
+was retrieved earlier
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa Request: {"content":"This is SPArta","date":"2022-03-18T05:58:05.528Z"}
+server-->browser: HTML-code
+
+note over server
+The server sets the note
+in its note array
+end note
+
+note over browser:
+The browser renders the notes
+including the note that was just
+pushed into notes array
+end note
