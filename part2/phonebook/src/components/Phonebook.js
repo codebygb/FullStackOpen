@@ -7,14 +7,14 @@ export const Phonebook = ({
 }) => {
   return (
     <>
-      <h2>Phonebook</h2>
+      <h2>Add Contact</h2>
       <form>
         <div>
-          name:
+          Name:
           <input value={newName} onChange={(e) => setNewName(e.target.value)} />
         </div>
         <div>
-          number:
+          Number:
           <input
             value={newNumber}
             onChange={(e) => setNewNumber(e.target.value)}

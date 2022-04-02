@@ -11,6 +11,7 @@ export const Search = ({ search, setSearch }) => {
       <h2>Search</h2>
       <form>
         <div>
+          Text:
           <input value={search} onChange={handleChange} />
         </div>
       </form>

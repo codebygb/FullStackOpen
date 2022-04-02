@@ -3,13 +3,16 @@ import { create, getAll, remove, update } from "./services/phonebookService";
 import { Search } from "./components/Search";
 import { Phonebook } from "./components/Phonebook";
 import { Numbers } from "./components/Numbers";
+import "./index.css";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     getAll()
@@ -17,7 +20,7 @@ const App = () => {
         setPersons(persons);
       })
       .catch((error) => {
-        setErrorMessage(error.response.data.error);
+        setErrorMsg(error.response.data.error);
       });
   }, []);
 
@@ -35,10 +38,20 @@ const App = () => {
           ...person,
           number: newNumber,
         };
-        update(id, newObject);
+        update(id, newObject).catch((error) => {
+          setErrorMsg(error.response.data.error);
+          setTimeout(() => {
+            setErrorMsg("");
+          }, 5000);
+          return;
+        });
         setPersons(
           persons.map((person) => (person.id !== id ? person : newObject))
         );
+        setMessage(`${newName} has been updated`);
+        setTimeout(() => {
+          setMessage("");
+        }, 5000);
         return;
       } else return;
     }
@@ -47,15 +60,42 @@ const App = () => {
       number: newNumber,
       id: persons.length + 1,
     };
-    create(newPerson).then((person) => setPersons(persons.concat(person)));
+    create(newPerson)
+      .then((person) => setPersons(persons.concat(person)))
+      .catch((error) => {
+        setErrorMsg(error.response.data.error);
+        setTimeout(() => {
+          setErrorMsg("");
+        }, 5000);
+        return;
+      });
     setNewName("");
     setNewNumber("");
+    setMessage(`${newName} has been added`);
+    setTimeout(() => {
+      setMessage("");
+    }, 5000);
   };
 
-  const removeContact = (id) => {
-    remove(id).then(() => {
-      setPersons(persons.filter((person) => person.id !== id));
-    });
+  const removeContact = (id, name) => {
+    remove(id)
+      .then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+        setMessage(`${name} has been removed`);
+        setTimeout(() => {
+          setMessage("");
+        }, 5000);
+      })
+      .catch((error) => {
+        if (error.response.status === 404) {
+          setErrorMsg(`${name} has already been removed from the server`);
+          setTimeout(() => {
+            setErrorMsg("");
+          }, 5000);
+        }
+
+        return;
+      });
   };
 
   const searchedContact =
@@ -66,8 +106,9 @@ const App = () => {
         );
 
   return (
-    <div>
+    <div className="phonebook">
       <h2>Phonebook</h2>
+      <Notification message={message} errorMsg={errorMsg} />
       <Search search={search} setSearch={setSearch} />
       <Phonebook
         newName={newName}

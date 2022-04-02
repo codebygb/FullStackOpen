@@ -5,7 +5,7 @@ export const Numbers = ({ persons, remove }) => {
       {persons.map((person) => (
         <p key={person.id}>
           {person.name} {person.number}{" "}
-          <button onClick={() => remove(person.id)}>delete</button>
+          <button onClick={() => remove(person.id, person.name)}>delete</button>
         </p>
       ))}
     </>
